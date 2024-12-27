@@ -82,29 +82,7 @@ DEFAULT_MODE = "screen"
 
 client = genai.Client(http_options={"api_version": "v1alpha"}, api_key=os.getenv("GEMINI_API_KEY"))
 
-CONFIG = {
-    "generation_config": {"response_modalities": ["AUDIO"]},
-    "tools": [
-        {
-            "function_declarations": [
-                {
-                    "name": "copy_to_clipboard",
-                    "description": "Copies the given text to the clipboard",
-                    "parameters": {
-                        "type": "object",
-                        "properties": {
-                            "text": {
-                                "type": "string",
-                                "description": "The text to copy to the clipboard"
-                            }
-                        },
-                        "required": ["text"]
-                    }
-                }
-            ]
-        }
-    ]
-}
+CONFIG = {"generation_config": {"response_modalities": ["AUDIO"]}}
 
 pya = pyaudio.PyAudio()
 
@@ -131,13 +109,7 @@ class AudioLoop:
             )
             if text.lower() == "q":
                 break
-            response = await self.session.send(text or ".", end_of_turn=True)
-            async for item in response:
-                if item.tool_call:
-                    if item.tool_call.name == "copy_to_clipboard":
-                        import pyperclip
-                        pyperclip.copy(item.tool_call.args["text"])
-                        print("Text copied to clipboard")
+            await self.session.send(text or ".", end_of_turn=True)
 
     def _get_frame(self, cap):
         # Read the frameq
