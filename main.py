@@ -189,7 +189,7 @@ class AudioLoop:
                     print(text, end="")
                 elif hasattr(response.tool_call, "function_calls"):
                     result = await self.handle_function_call(response.tool_call.function_calls)
-
+                    
             while not self.audio_in_queue.empty():
                 self.audio_in_queue.get_nowait()
 

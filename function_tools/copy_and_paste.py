@@ -5,8 +5,9 @@ import pyperclip
 async def input_text_to_screen(text):
     """Input text to the screen (simulating typing)"""
     try:
-        # Simulate typing the text
-        pyautogui.typewrite(text)
+        # Copy text to clipboard and simulate paste
+        pyperclip.copy(text)
+        pyautogui.hotkey('ctrl', 'v')
 
         return {"success": True, "message": f"Inputted text: {text}"}
     except Exception as e:
