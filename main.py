@@ -63,16 +63,19 @@ SEND_SAMPLE_RATE = 16000
 RECEIVE_SAMPLE_RATE = 24000
 CHUNK_SIZE = 1024
 MODEL = "models/gemini-2.0-flash-exp"
-DEFAULT_MODE = "screen"
+DEFAULT_VIDEO_MODE = "screen"
+DEFAULT_MODALITY = "AUDIO"
 
 client = genai.Client(http_options={"api_version": "v1alpha"}, api_key=os.getenv("GEMINI_API_KEY"))
-CONFIG = {"generation_config": {"response_modalities": ["AUDIO"], "temperature": 0},
-          "system_instruction": "Do not repeat what user said and what you're going to do (especially when user is requesting function/tool calls). You are expert in tool calling and always succeed."}
+CONFIGA = {"generation_config": {"response_modalities": ["AUDIO"], "temperature": 0},
+          "system_instruction": "Do not repeat what user said and what you're going to do (especially when user is requesting function/tool calls) - just acknowledge if the call was succesfull or not."}
+CONFIGT = {"generation_config": {"response_modalities": ["TEXT"], "temperature": 0},
+          "system_instruction": "Do not repeat what user said and what you're going to do (especially when user is requesting function/tool calls) - just acknowledge if the call was succesfull or not."}
 
 pya = pyaudio.PyAudio()
 
 class AudioLoop:
-    def __init__(self, video_mode=DEFAULT_MODE):
+    def __init__(self, video_mode=DEFAULT_VIDEO_MODE, modality=DEFAULT_MODALITY):
         self.video_mode = video_mode
         self.audio_in_queue = None
         self.out_queue = None
@@ -80,6 +83,7 @@ class AudioLoop:
         self.send_text_task = None
         self.receive_audio_task = None
         self.play_audio_task = None
+        self.modality = modality
 
     def get_tools(self):
         return get_all_tools()
@@ -222,7 +226,11 @@ class AudioLoop:
     async def run(self):
         while True:
             try:
-                config = CONFIG.copy()
+                if self.modality == "AUDIO":
+                    config = CONFIGA.copy()
+                else:
+                    config = CONFIGT.copy()
+
                 config["tools"] = self.get_tools()
                 async with (
                     client.aio.live.connect(model=MODEL, config=config) as session,
@@ -258,10 +266,17 @@ if __name__ == "__main__":
     parser.add_argument(
         "--mode",
         type=str,
-        default=DEFAULT_MODE,
+        default=DEFAULT_VIDEO_MODE,
         help="pixels to stream from",
         choices=["camera", "screen", "none"],
     )
+    parser.add_argument(
+        "--modality",
+        type=str,
+        default=DEFAULT_MODALITY,
+        help="modality to use",
+        choices=["AUDIO", "TEXT"],
+    )
     args = parser.parse_args()
-    main = AudioLoop(video_mode=args.mode)
+    main = AudioLoop(video_mode=args.mode, modality=args.modality)
     asyncio.run(main.run())
