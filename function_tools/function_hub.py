@@ -3,6 +3,7 @@ import logging
 from .copy_to_clipboard import copy_to_clipboard, get_copy_to_clipboard_tool
 from .copy_and_paste import input_text_to_screen, get_input_text_to_screen_tool
 from .press_keys import press_keys, get_press_keys_tool
+from .get_clipboard import get_clipboard, get_get_clipboard_tool
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -19,12 +20,16 @@ _TOOLS = {
     "press_keys": {
         "function": press_keys,
         "tool_data": get_press_keys_tool()
+    },
+    "get_clipboard": {
+        "function": get_clipboard,
+        "tool_data": get_get_clipboard_tool()
     }
 }
 
 def get_all_tools():
     return [{"function_declarations": [tool_data["tool_data"] for tool_data in _TOOLS.values()]},
-            {"code_exeution": {}},
+            {"code_execution": {}},
             {"google_search": {}}]
 
 async def execute_function(name, args):

@@ -187,9 +187,23 @@ class AudioLoop:
                     continue
                 if text := response.text:
                     print(text, end="")
-                elif hasattr(response.tool_call, "function_calls"):
-                    result = await self.handle_function_call(response.tool_call.function_calls)
-                    
+                if tool_call := response.tool_call:
+                    result = await self.handle_function_call(tool_call.function_calls)
+
+                    tool_response = genai.types.LiveClientToolResponse(
+                        function_responses=[
+                            genai.types.FunctionResponse(
+                                id=call.id,
+                                name=call.name,
+                                response={'result': result[i]}
+                            ) for i, call in enumerate(tool_call.function_calls)
+                        ]
+                    )
+                    await self.session.send(tool_response)
+                if tool_call_cancellation := response.tool_call_cancellation:
+                    print(f"Tool cancellation: {tool_call_cancellation}")
+                    continue
+
             while not self.audio_in_queue.empty():
                 self.audio_in_queue.get_nowait()
 
