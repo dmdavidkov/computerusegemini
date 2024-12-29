@@ -186,11 +186,12 @@ class AudioLoop:
         while True:
             turn = self.session.receive()
             async for response in turn:
-                if data := response.data:
-                    self.audio_in_queue.put_nowait(data)
-                    continue
-                if text := response.text:
-                    print(text, end="")
+                
+                # print the contents of response.tool_call if it exists
+                if response.tool_call or response.tool_call_cancellation:
+                    print(response.tool_call)
+                    print(response.tool_call_cancellation)
+
                 if tool_call := response.tool_call:
                     result = await self.handle_function_call(tool_call.function_calls)
 
@@ -204,6 +205,12 @@ class AudioLoop:
                         ]
                     )
                     await self.session.send(tool_response)
+                    
+                if data := response.data:
+                    self.audio_in_queue.put_nowait(data)
+                    continue
+                if text := response.text:
+                    print(text, end="")
                 if tool_call_cancellation := response.tool_call_cancellation:
                     print(f"Tool cancellation: {tool_call_cancellation}")
                     continue
