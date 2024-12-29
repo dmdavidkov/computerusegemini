@@ -65,12 +65,14 @@ CHUNK_SIZE = 1024
 MODEL = "models/gemini-2.0-flash-exp"
 DEFAULT_VIDEO_MODE = "screen"
 DEFAULT_MODALITY = "AUDIO"
+SYSTEM_INSTRUCTION = "Do not repeat what user said and what you're going to do (especially when user is requesting function/tool calls) - just acknowledge if the call was succesfull or not."
 
 client = genai.Client(http_options={"api_version": "v1alpha"}, api_key=os.getenv("GEMINI_API_KEY"))
+
 CONFIGA = {"generation_config": {"response_modalities": ["AUDIO"], "temperature": 0},
-          "system_instruction": "Do not repeat what user said and what you're going to do (especially when user is requesting function/tool calls) - just acknowledge if the call was succesfull or not."}
+          "system_instruction": SYSTEM_INSTRUCTION}
 CONFIGT = {"generation_config": {"response_modalities": ["TEXT"], "temperature": 0},
-          "system_instruction": "Do not repeat what user said and what you're going to do (especially when user is requesting function/tool calls) - just acknowledge if the call was succesfull or not."}
+          "system_instruction": SYSTEM_INSTRUCTION}
 
 pya = pyaudio.PyAudio()
 
@@ -195,7 +197,7 @@ class AudioLoop:
                 if tool_call := response.tool_call:
                     result = await self.handle_function_call(tool_call.function_calls)
 
-                    tool_response = genai.types.LiveClientToolResponse(
+                    tool_responses = genai.types.LiveClientToolResponse(
                         function_responses=[
                             genai.types.FunctionResponse(
                                 id=call.id,
@@ -204,7 +206,7 @@ class AudioLoop:
                             ) for i, call in enumerate(tool_call.function_calls)
                         ]
                     )
-                    await self.session.send(tool_response)
+                    await self.session.send(tool_responses)
                     
                 if data := response.data:
                     self.audio_in_queue.put_nowait(data)

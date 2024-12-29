@@ -4,7 +4,7 @@ from .copy_to_clipboard import copy_to_clipboard, get_copy_to_clipboard_tool
 from .copy_and_paste import input_text_to_screen, get_input_text_to_screen_tool
 from .press_keys import press_keys, get_press_keys_tool
 from .get_clipboard import get_clipboard, get_get_clipboard_tool
-
+from .output_text_to_screen import output_text_to_screen, get_output_text_to_screen_tool
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -24,6 +24,10 @@ _TOOLS = {
     "get_clipboard": {
         "function": get_clipboard,
         "tool_data": get_get_clipboard_tool()
+    },
+    "output_text_to_screen": {
+        "function": output_text_to_screen,
+        "tool_data": get_output_text_to_screen_tool()
     }
 }
 
