@@ -1,40 +1,3 @@
-# -*- coding: utf-8 -*-
-# Copyright 2023 Google LLC
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-# http://www.apache.org/licenses/LICENSE-2.0
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
-"""
-## Setup
-To install the dependencies for this script, run:
-```
-pip install google-genai opencv-python pyaudio pillow mss pyperclip
-```
-Before running this script, ensure the `GOOGLE_API_KEY` environment
-variable is set to the api-key you obtained from Google AI Studio.
-
-Important: **Use headphones**. This script uses the system default audio
-input and output, which often won't include echo cancellation. So to prevent
-the model from interrupting itself it is important that you use headphones.
-
-## Run
-To run the script:
-```
-python live_api_starter.py
-```
-The script takes a video-mode flag `--mode`, this can be "camera", "screen", or "none".
-The default is "camera". To share your screen run:
-```
-python live_api_starter.py --mode screen
-```
-"""
-
 import asyncio
 import base64
 import io
@@ -50,7 +13,7 @@ from google import genai
 import websockets
 from function_tools.function_hub import get_all_tools, execute_function
 from dotenv import load_dotenv
-load_dotenv()  # take environment variables from .env.
+load_dotenv(override=True)  # take environment variables from .env.
 
 FORMAT = pyaudio.paInt16
 CHANNELS = 1
@@ -61,7 +24,7 @@ MODEL = "models/gemini-2.0-flash-exp"
 DEFAULT_VIDEO_MODE = "screen"
 DEFAULT_MODALITY = "AUDIO"
 SYSTEM_INSTRUCTION = "For tasks that require multiple steps involving function calls, provide all the necessary function calls in a single response. Do not repeat what the user said or what you are going to do. Acknowledge if the function calls were successful."
-
+print(os.getenv("GEMINI_API_KEY"))
 client = genai.Client(http_options={"api_version": "v1alpha"}, api_key=os.getenv("GEMINI_API_KEY"))
 
 CONFIGA = {"generation_config": {"response_modalities": ["AUDIO"], "temperature": 0},
