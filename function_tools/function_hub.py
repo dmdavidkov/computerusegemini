@@ -5,7 +5,9 @@ from .copy_and_paste import input_text_to_screen, get_input_text_to_screen_tool
 from .press_keys import press_keys, get_press_keys_tool
 from .get_clipboard import get_clipboard, get_get_clipboard_tool
 from .output_text_to_screen import output_text_to_screen, get_output_text_to_screen_tool
-# Configure logging
+from .move_mouse import move_mouse, get_move_mouse_tool
+from .click_mouse import click_mouse, get_click_mouse_tool
+from .execute_js_in_brave import execute_js_in_brave, get_execute_js_in_brave_tool
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 _TOOLS = {
@@ -28,6 +30,18 @@ _TOOLS = {
     "output_text_to_screen": {
         "function": output_text_to_screen,
         "tool_data": get_output_text_to_screen_tool()
+    },
+    "move_mouse": {
+        "function": move_mouse,
+        "tool_data": get_move_mouse_tool()
+    },
+    "click_mouse": {
+        "function": click_mouse,
+        "tool_data": get_click_mouse_tool()
+    },
+    "execute_js_in_brave": {
+        "function": execute_js_in_brave,
+        "tool_data": get_execute_js_in_brave_tool()
     }
 }
 
@@ -41,7 +55,12 @@ async def execute_function(name, args):
     if name not in _TOOLS:
         error_message = f"Unknown function: {name}"
         logging.error(error_message)
-        return {"success": False, "error": error_message}
-    result = await _TOOLS[name]["function"](**args)
-    logging.info(f"Function {name} returned: {result}")
-    return result
+        return {"success": False, "error": error_message, "additional_calls": False}
+    try:
+        result = await _TOOLS[name]["function"](**args)
+        logging.info(f"Function {name} returned: {result}")
+        return {"success": True, "result": result, "additional_calls": False}
+    except Exception as e:
+        error_message = f"Error executing function {name}: {e}"
+        logging.error(error_message)
+        return {"success": False, "error": error_message, "additional_calls": False}

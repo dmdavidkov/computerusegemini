@@ -52,11 +52,6 @@ from function_tools.function_hub import get_all_tools, execute_function
 from dotenv import load_dotenv
 load_dotenv()  # take environment variables from .env.
 
-if sys.version_info < (3, 11, 0):
-    import taskgroup, exceptiongroup
-    asyncio.TaskGroup = taskgroup.TaskGroup
-    asyncio.ExceptionGroup = exceptiongroup.ExceptionGroup
-
 FORMAT = pyaudio.paInt16
 CHANNELS = 1
 SEND_SAMPLE_RATE = 16000
@@ -65,7 +60,7 @@ CHUNK_SIZE = 1024
 MODEL = "models/gemini-2.0-flash-exp"
 DEFAULT_VIDEO_MODE = "screen"
 DEFAULT_MODALITY = "AUDIO"
-SYSTEM_INSTRUCTION = "Do not repeat what user said and what you're going to do (especially when user is requesting function/tool calls) - just acknowledge if the call was succesfull or not."
+SYSTEM_INSTRUCTION = "For tasks that require multiple steps involving function calls, provide all the necessary function calls in a single response. Do not repeat what the user said or what you are going to do. Acknowledge if the function calls were successful."
 
 client = genai.Client(http_options={"api_version": "v1alpha"}, api_key=os.getenv("GEMINI_API_KEY"))
 
@@ -155,7 +150,7 @@ class AudioLoop:
             frame = await asyncio.to_thread(self._get_screen)
             if frame is None:
                 break
-            await asyncio.sleep(1.0)
+            await asyncio.sleep(1)
             await self.out_queue.put(frame)
 
     async def send_realtime(self):
@@ -190,9 +185,9 @@ class AudioLoop:
             async for response in turn:
                 
                 # print the contents of response.tool_call if it exists
-                if response.tool_call or response.tool_call_cancellation:
-                    print(response.tool_call)
-                    print(response.tool_call_cancellation)
+                # if response.tool_call or response.tool_call_cancellation:
+                #     print(response.tool_call)
+                #     print(response.tool_call_cancellation)
 
                 if tool_call := response.tool_call:
                     result = await self.handle_function_call(tool_call.function_calls)
@@ -206,6 +201,7 @@ class AudioLoop:
                             ) for i, call in enumerate(tool_call.function_calls)
                         ]
                     )
+                    
                     await self.session.send(tool_responses)
                     
                 if data := response.data:
@@ -213,9 +209,6 @@ class AudioLoop:
                     continue
                 if text := response.text:
                     print(text, end="")
-                if tool_call_cancellation := response.tool_call_cancellation:
-                    print(f"Tool cancellation: {tool_call_cancellation}")
-                    continue
 
             while not self.audio_in_queue.empty():
                 self.audio_in_queue.get_nowait()
