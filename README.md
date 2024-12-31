@@ -37,7 +37,7 @@ The `function_tools` directory contains a set of Python scripts that provide var
 -   `click_mouse.py`: Performs a mouse click at the current cursor position.
 -   `copy_and_paste.py`: Inputs text to the screen by simulating typing.
 -   `copy_to_clipboard.py`: Copies text to the system clipboard.
--   `execute_js_in_brave.py`: Executes JavaScript code in the currently active Brave browser window.
+-   `execute_js_in_brave.py`: Executes JavaScript code in the currently active chromium based browser window.
 -   `function_hub.py`: Manages and executes the available function tools.
 -   `get_clipboard.py`: Retrieves the current text from the system clipboard.
 -   `move_mouse.py`: Moves the mouse cursor to specified coordinates.
@@ -46,8 +46,7 @@ The `function_tools` directory contains a set of Python scripts that provide var
 
 ## Contributing
 
-Let people know how they can contribute to your project.
 
 ## License
 
-Specify the license for your project.
+
