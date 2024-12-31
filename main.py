@@ -24,7 +24,7 @@ MODEL = "models/gemini-2.0-flash-exp"
 DEFAULT_VIDEO_MODE = "screen"
 DEFAULT_MODALITY = "AUDIO"
 SYSTEM_INSTRUCTION = "For tasks that require multiple steps involving function calls, provide all the necessary function calls in a single response. Do not repeat what the user said or what you are going to do. Acknowledge if the function calls were successful."
-print(os.getenv("GEMINI_API_KEY"))
+
 client = genai.Client(http_options={"api_version": "v1alpha"}, api_key=os.getenv("GEMINI_API_KEY"))
 
 CONFIGA = {"generation_config": {"response_modalities": ["AUDIO"], "temperature": 0},
