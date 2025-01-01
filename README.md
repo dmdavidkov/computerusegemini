@@ -10,9 +10,13 @@ This project provides a starter kit for building applications that interact with
     pip install -r requirements.txt
     ```
 
-2. Set the `GEMINI_API_KEY` environment variable to your Gemini API key. You can obtain one from [Google AI Studio](https://aistudio.google.com/app/apikey).
+2. Rename the `.env.example` file to `.env`
 
-3. **Important:** Use headphones when running the script to prevent audio feedback loops.
+3. Obtain a Gemini API key from [Google AI Studio](https://aistudio.google.com/app/apikey)
+
+4. Replace `your_api_key_here` in `.env` with your actual API key.
+
+**Important:** Use headphones when running the script to prevent audio feedback loops.
 
 ## Usage
 
