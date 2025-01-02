@@ -2,7 +2,6 @@ import asyncio
 import base64
 import io
 import os
-import sys
 import traceback
 import cv2
 import pyaudio
