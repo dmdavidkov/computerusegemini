@@ -95,7 +95,7 @@ class AudioLoop:
         cap.release()
 
     def _get_screen(self):
-        sct = mss.mss()
+        sct = mss.mss(with_cursor=True)
         monitor = sct.monitors[0]
         i = sct.grab(monitor)
         mime_type = "image/jpeg"
