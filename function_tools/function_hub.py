@@ -7,7 +7,7 @@ from .get_clipboard import get_clipboard, get_get_clipboard_tool
 from .output_text_to_screen import output_text_to_screen, get_output_text_to_screen_tool
 from .move_mouse import move_mouse, get_move_mouse_tool
 from .click_mouse import click_mouse, get_click_mouse_tool
-from .execute_js_in_brave import execute_js_in_brave, get_execute_js_in_brave_tool
+from .execute_js_in_chromium import execute_js_in_chromium, get_execute_js_in_chromium_tool
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 _TOOLS = {
@@ -31,17 +31,17 @@ _TOOLS = {
         "function": output_text_to_screen,
         "tool_data": get_output_text_to_screen_tool()
     },
-    "move_mouse": {
-        "function": move_mouse,
-        "tool_data": get_move_mouse_tool()
-    },
-    "click_mouse": {
-        "function": click_mouse,
-        "tool_data": get_click_mouse_tool()
-    },
-    "execute_js_in_brave": {
-        "function": execute_js_in_brave,
-        "tool_data": get_execute_js_in_brave_tool()
+    #"move_mouse": {
+    #    "function": move_mouse,
+    #    "tool_data": get_move_mouse_tool()
+    #},
+    #"click_mouse": {
+    #    "function": click_mouse,
+    #    "tool_data": get_click_mouse_tool()
+    #},
+    "execute_js_in_chromium": {
+        "function": execute_js_in_chromium,
+        "tool_data": get_execute_js_in_chromium_tool()
     }
 }
 
